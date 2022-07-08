@@ -1,5 +1,5 @@
 # Python
-from typing import Optional
+from typing import Optional, Union
 
 # Pydantic
 from pydantic import BaseModel
@@ -22,17 +22,40 @@ class Person(BaseModel):
     hair_color: Optional[str] = None
     is_married: Optional[bool] = None
 
+class Item(BaseModel):
+    """Item Model"""
+    name: str
+    price: float
+    is_offer: Union[bool, None] = None
 
-@app.get('/api')
+
+@app.get('/')
 def home():
-    """First endpoint"""
+    """API endpoint"""
+    return {'Message': 'Welcome to the API - Everything is OK'}
+
+
+@app.get('/status')
+def status():
+    """Status endpoint"""
     return {'Status': 'OK',
-            'message': 'API home',
+            'message': 'API status',
             'status_code': 200}
 
 
-# Request and Response body
+@app.get('/items/{item_id}')
+def read_item(item_id: int, q: Union[str, None] = None):
+    """URL Params"""
+    return {'item_id': item_id, 'q': q}
 
+
+@app.put('/items/{item_id}')
+def update_item(item_id: int, item: Item):
+    """Update endpoint"""
+    return {'item_name': item.name, 'item_id': item_id}
+
+
+# Request and Response body
 @app.post('/person/new')
 def create_person(person: Person = Body(...)):
     """Allows to create new person"""
